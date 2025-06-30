@@ -1,0 +1,9 @@
+FROM nginx:1.27.1
+
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+COPY ./ /opt/trainer/trainer-server
+
+EXPOSE 8030
+
+CMD ["nginx", "-g", "daemon off;"]

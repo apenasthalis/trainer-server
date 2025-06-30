@@ -1,16 +1,30 @@
+version: '3.8'
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: mapdata_db
-    ports:
-      - "5432:5432"
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - .:/var/www/html
     networks:
-      - default
-      - mapdata-network
+      - orm-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8030:8030"
+    depends_on:
+      - php
+    networks:
+      - orm-network
+
+networks:
+  orm-network:
+    driver: bridge
