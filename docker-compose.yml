@@ -1,0 +1,30 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    volumes:
+      - .:/var/www/html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - orm-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8030:8030"
+    depends_on:
+      - php
+    networks:
+      - orm-network
+
+networks:
+  orm-network:
+    driver: bridge
